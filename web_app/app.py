@@ -1,7 +1,5 @@
-from flask import Flask, flash, redirect, render_template, request, abort, url_for, jsonify, send_file
-import json
-from main import main
-import os
+from flask import Flask, render_template, request, redirect, url_for
+from main import create_graph
 import matplotlib
 
 matplotlib.use('Agg')
@@ -19,8 +17,7 @@ def results():
 @app.route("/api/custom_chart", methods=['POST'])
 def custom_chart():
     data = request.form
-    print("POST /api/custom_chart recieved")
-    main(dict(data))
+    create_graph(dict(data))
     return redirect(url_for('results'))
 
 if __name__ == "__main__":

@@ -3,19 +3,25 @@
 <h1>Marijuana Relapse Custom Chart Generator **Beta**</h1>
 
 <div id="content">
-    <input type="checkbox" name="female">Female?<br>
-    <input type="checkbox" name="nonwhite">Nonwhite?<br>
-    <input type="checkbox" name="unemplmt">Unemployed?<br>
-    <input type="checkbox" name="prsatx">Any prior substance abuse treatment?<br>
-    <!-- <input type="checkbox" name="tsd_0">Traumatic Stress Disorder of any kind?<br>
-    <input type="checkbox" name="und15">Age of first use before 15?<br>
-    <input type="checkbox" name="dldiag">Dual diagnosis (ie. not just for marijuana)?<br>
-    <input type="checkbox" name="suicprbs_0">Ever considered suicide?<br>
-    <input type="checkbox" name="homeless_0">Ever been homeless?<br>
-    <input type="checkbox" name="S6">Ever attended AA CA NA SR or other grp?<br><br>
-    <input type="checkbox" name="ncar">Are you close with anyone in recovery?<br>
-    <input type="checkbox" name="engage30">Have you been in treatment for 30+ days (3 sessions)?<br><br>
-    <input type="checkbox" name="init">Did you initiate treatment between 14 days before and 7 days after checking in?<br><br> -->
+    <label>Gender</label>
+    <select id="gender">
+        <option value='-1'>All</option>
+        <option value='0'>Male</option>
+        <option value='1'>Female</option>
+    </select>
+    <br>
+    <label>Race</label>
+    <select id = "race">
+        <option value='-1'>All</option>
+        <option value='0'>White</option>
+        <option value='1'>Non-White</option>
+    </select>
+    <!-- NEED TO FIND A BETTER WAY TO SELECT LEVEL OF TRAUMA TO FILTER BY -->
+    <!-- <select id = "trauma">
+        <option value = '1'>Include</option>
+        <option value = '-1'>Exclude</option>
+    </select> -->
+    <br>
     <input type="submit" value="Submit" onclick="handle_submit();">
 </div>
 
@@ -23,21 +29,17 @@
 
 function handle_submit() {
     // keep hardcoded dictionary for filtering which options user selected
-    var form_data = {'female':0, 'nonwhite':0, 'unemplmt':0, 'prsatx':0}
-    // var form_data = {'female':0, 'nonwhite':0, 'unemplmt':0, 'prsatx':0, 'tsd_0':0, 'und15':0, 'dldiag':0, 'suicprbs_0':0, 'homeless_0':0, 'ncar':0, 'engage30':0
-    // read which checkboxes user selected
-    var selected = [];
-    $('#content input:checked').each(function() {
-        selected.push($(this).attr('name'));
-    });
-    // indicate in form_data that user checked the checkbox
-    selected.forEach((x) => form_data[x] = 1);
-    for (var item in form_data) {
-        if (form_data[item] == 0) {
-            delete form_data[item]
-        }
+    var form_data = {}
+    var e = document.getElementById("gender");
+    var gender = e.options[e.selectedIndex].value;
+    if (gender != -1) {
+        form_data['female'] = gender;
     }
-
+    e = document.getElementById("race");
+    var race = e.options[e.selectedIndex].value;
+    if (race != -1) {
+        form_data['nonwhite'] = race;
+    }
     $.ajax({
         method: 'POST',
         url: '/api/custom_chart',
