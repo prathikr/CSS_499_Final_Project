@@ -9,8 +9,17 @@ import pandas as pd
 
 sns.set_style("whitegrid")
 
-def run_model(df):
+def run_model(df, user_data, truncate_training_data):
     Xtr, Xte = train_test_split(df, test_size=0.2)
+
+    if not truncate_training_data:
+        print('Truncating test set')
+        for key in user_data.keys():
+            if key != 'truncate_training_data':
+                print("filtering by " + key + " with value " + user_data[key][0])
+                df = df.loc[df[key] == int(user_data[key][0])]
+                # DO NOT DROP COLUMNS OR ELSE MODEL WON'T WORK SINCE TRAINED WITH ALL FEATURES
+        print("shape", user_data, df.shape)
 
     # extract Marujiana_Days predictor
     Ytr = Xtr['Marijuana_Days'].copy()
@@ -30,12 +39,15 @@ def run_model(df):
     plt.clf()
 
     plt.plot(np.mean([person.y for person in pred_surv], axis=0))
+    # plt.plot(np.mean([person.y for person in Yte], axis=0))
     plt.suptitle('Probability of Relapse Over A Year')
     plt.ylabel("Probability")
     plt.xlabel("Days")
     plt.title('Concordance Index: ' + str(score), fontsize=10)
     plt.xlim(right=365)
     plt.savefig('static/charts/chart.png')
+
+    #return coefs
 
 
 

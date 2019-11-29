@@ -3,17 +3,21 @@ import pandas as pd
 import numpy as np
 from sklearn import preprocessing
 
-def preprocess(user_data):
+def preprocess(user_data, truncate_training_data):
     print("preprocessing data...")
     # read csv from github url
     # return pandas dataframe
     url = '../BISTRA_GROUP_PROJECT_SMALL.csv'
     df = pd.read_csv(url)
-    print("read in data", df.shape)
-    for key in user_data.keys():
-        df = df.loc[df[key] == int(user_data[key][0])]
-        df.drop(columns=[key], inplace=True)
-    print("shape", user_data, df.shape)
+    print("read in data:", df.shape)
+    if truncate_training_data:
+        print('Truncating entire dataset')
+        for key in user_data.keys():
+            if key != 'truncate_training_data':
+                print("filtering by " + key + " with value " + user_data[key][0])
+                df = df.loc[df[key] == int(user_data[key][0])]
+                df.drop(columns=[key], inplace=True)
+        print("shape", user_data, df.shape)
 
     df = df[df.Marijuana_Days != -999] # removes all rows with Marijuana_Days = -999
     df['zipcode'] = df['zipcode'].str[:5] # trim zip codes down to first 5 digits
@@ -80,7 +84,6 @@ def preprocess(user_data):
     scaler = preprocessing.StandardScaler()
     for i in cols:
         if i in list(df.columns):
-            print(df.shape)
             df[i] = scaler.fit_transform(df[[i]])
 
     return df

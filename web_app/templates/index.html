@@ -1,7 +1,7 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
 <h1>Marijuana Relapse Custom Chart Generator **Beta**</h1>
-
+<h3>Filter Data</h3>
 <div id="content">
     <label>Gender</label>
     <select id="gender">
@@ -16,12 +16,18 @@
         <option value='0'>White</option>
         <option value='1'>Non-White</option>
     </select>
+    <br>
+    <label>Pre-Processing</label>
+    <select id = "truncate">
+        <option value='1'>Truncate Entire Dataset</option>
+        <option value='0'>Only Truncate Test Data</option>
+    </select>
     <!-- NEED TO FIND A BETTER WAY TO SELECT LEVEL OF TRAUMA TO FILTER BY -->
     <!-- <select id = "trauma">
         <option value = '1'>Include</option>
         <option value = '-1'>Exclude</option>
     </select> -->
-    <br>
+    <br><br>
     <input type="submit" value="Submit" onclick="handle_submit();">
 </div>
 
@@ -40,6 +46,10 @@ function handle_submit() {
     if (race != -1) {
         form_data['nonwhite'] = race;
     }
+    e = document.getElementById("truncate");
+    var truncate = e.options[e.selectedIndex].value;
+    form_data['truncate_training_data'] = truncate;
+    print("form data:", form_data)
     $.ajax({
         method: 'POST',
         url: '/api/custom_chart',
